@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div id="container">
+            <h1 id="imageTitle">Pokedex</h1>
+            <img id="characterImage" src="" alt="">
+            <ul >
+                <li id="characterTypes"></li>
+                <li id="characterId"></li>
+            </ul>
+            <button id="preButton" class="btn btn-primary">Click for previous pokemon</button>
+            <button id="nextButton" class="btn btn-primary">Click for next pokemon</button>
+            <button id="randomButton" class="btn btn-primary">Click for a random pokemon</button>
+        </div>
+    </body>
+</html>
+
+<script>
+let imageIndex = 0;
+let maxIndex = 802;
+let types = [];
+let randomIndex = Math.floor(Math.random() * 801) + 1;
+
+// Next pokemon
+$(document).ready(function(){
+  $("#nextButton").click(function(){
+    imageIndex++;
+    if(imageIndex > 802){ 
+        imageIndex = 1;
+    }
+    $.getJSON("https://pokeapi.co/api/v2/pokemon/" + imageIndex, function(data, status){
+      let characterName = data.name;
+      let characterUrl = data.sprites.front_default;
+      let characterTypes = data.types;
+      let newName = capitalizeFirstLetter(characterName);
+      let characterId = data.id;
+      console.log(characterId);
+
+    // Loop types object and push to html
+      characterTypes.forEach(function(type){
+        types.push(type.type.name + " ");
+      });
+
+      $("#imageTitle").html(newName);
+      $("#characterImage").attr("src", characterUrl);
+      $("#characterTypes").html("Type: " + types);
+      $("#characterId").html("ID: " + characterId);
+
+      types = [];
+      
+    });
+  });
+});
+
+// Previous pokemon
+$(document).ready(function(){
+  $("#preButton").click(function(){
+      // Update value on click
+    imageIndex--;
+    // Check if value is zero or less
+    if(imageIndex <= 0){ 
+        imageIndex = maxIndex
+    }
+    $.getJSON("https://pokeapi.co/api/v2/pokemon/" + imageIndex, function(data, status){
+      let characterName = data.name;
+      let characterUrl = data.sprites.front_default;
+      let characterTypes = data.types;
+      let newName = capitalizeFirstLetter(characterName);
+      let characterId = data.id;
+      console.log(characterId);
+
+    // Loop types object and push to html
+      characterTypes.forEach(function(type){
+        types.push(type.type.name + " ");
+      });
+
+      $("#imageTitle").html(newName);
+      $("#characterImage").attr("src", characterUrl);
+      $("#characterTypes").html("Type: " + types);
+      $("#characterId").html("ID: " + characterId);
+
+      types = [];
+    });
+  });
+});
+
+// Random pokemon
+$(document).ready(function(){
+  $("#randomButton").click(function(){
+    imageIndex = Math.floor(Math.random() * 801) + 1;
+    $.getJSON("https://pokeapi.co/api/v2/pokemon/" + imageIndex, function(data, status){   
+      let characterName = data.name;
+      let characterUrl = data.sprites.front_default;
+      let characterTypes = data.types;
+      let newName = capitalizeFirstLetter(characterName);
+      let characterId = data.id;
+      console.log(characterId);
+
+    // Loop types object and push to html
+      characterTypes.forEach(function(type){
+        types.push(type.type.name + " ");
+      });
+
+      $("#imageTitle").html(newName);
+      $("#characterImage").attr("src", characterUrl);
+      $("#characterTypes").html("Type: " + types);
+      $("#characterId").html("ID: " + characterId);
+
+      types = [];
+    });
+  });
+});
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+</script>
+
+<style>
+    #container{
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); 
+        grid-template-rows: repeat(8, minmax(100px, auto)); 
+        background-image: url("https://cdn.pixabay.com/photo/2016/08/17/20/13/pokemon-1601390_960_720.jpg");
+        background-repeat: no-repeat, repeat;
+        background-size: cover;
+        background-position: center;
+        
+    }
+    #imageTitle{
+        grid-column: 2 / 4;
+        grid-row: 1 / 2;
+        justify-self: center;
+        color: white;
+        font-size: 60px;
+    }
+    #characterImage{
+        grid-column: 2 / 4;
+        grid-row: 2 / 4;
+        justify-self: center;
+        height: 400px;
+    }
+    ul{
+        grid-column: 2 / 4;
+        grid-row: 4 / 5;
+        justify-self: center;
+        padding: 0;
+        margin-top: 10px;
+    }
+    li{
+        list-style: none;
+        font-size: 24px;
+    }
+    #preButton{
+        grid-column: 2 / 3;
+        grid-row: 5 / 6;
+        justify-self: end;
+        height: 100px;
+        width: 200px;
+        margin: 5px;
+    }
+    #nextButton{
+        grid-column: 3 / 4;
+        grid-row: 5 / 6;
+        height: 100px;
+        width: 200px;
+        margin: 5px;
+    }
+    #randomButton{
+        grid-column: 2 / 4;
+        grid-row: 6 / 7;
+        justify-self: center;
+        height: 100px;
+        width: 200px;
+        margin: 5px;
+    }
+    
+
+</style>
